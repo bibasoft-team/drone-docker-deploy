@@ -69,7 +69,7 @@ async function main() {
   fs.writeFileSync(PLUGIN_COMPOSE_FILE, COMPOSE_CONTENT)
 
   const drone_commands = [
-    `docker login -u ${PLUGIN_REGISTRY_USERNAME} -p ${PLUGIN_REGISTRY_PASSWORD} ${PLUGIN_REGISTRY_URL}`,
+    `echo "${PLUGIN_REGISTRY_PASSWORD}" | docker login --u ${PLUGIN_REGISTRY_USERNAME} --password-stdin ${PLUGIN_REGISTRY_URL}`,
     `docker-compose -f ${PLUGIN_COMPOSE_FILE} build --pull`,
     `docker-compose -f ${PLUGIN_COMPOSE_FILE} push`
   ]
@@ -79,7 +79,7 @@ async function main() {
     `cat > ${COMPOSE_FILE} <<EOF
   ${COMPOSE_CONTENT}
   EOF `,
-    `docker login -u ${PLUGIN_REGISTRY_USERNAME} -p ${PLUGIN_REGISTRY_PASSWORD} ${PLUGIN_REGISTRY_URL}`,
+    `echo "${PLUGIN_REGISTRY_PASSWORD}" | docker login --u ${PLUGIN_REGISTRY_USERNAME} --password-stdin ${PLUGIN_REGISTRY_URL}`,
     `docker-compose -f ${COMPOSE_FILE} down`,
     `docker-compose -f ${COMPOSE_FILE} pull`,
     `docker-compose -f ${COMPOSE_FILE} up -d`
@@ -130,12 +130,18 @@ async function main() {
 
     for (const command of commands) {
       console.log('ssh exec', command)
-      const { stdout, stderr } = await SSH.execCommand(command, { cwd: TARGET })
-      if (stdout)
-        console.log('stdout', stdout)
-      if (stderr) {
-        console.error('stderr', stderr)
-        throw stderr
+      try {
+        const { stdout, stderr } = await SSH.execCommand(command, { cwd: TARGET })
+        if (stdout)
+          console.log('stdout', stdout)
+        if (stderr) {
+          console.error('stderr', stderr)
+          throw stderr
+        }
+      } catch (err) {
+        if (!(err + '').toLowerCase().includes('warning')) {
+          throw err
+        }
       }
     }
     SSH.dispose()
