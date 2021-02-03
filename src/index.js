@@ -76,9 +76,7 @@ async function main() {
 
   const ssh_commands = [
     // `cd ${TARGET}`,
-    `cat > ${COMPOSE_FILE} <<EOF
-  ${COMPOSE_CONTENT}
-  EOF `,
+    `cat > ${COMPOSE_FILE} <<EOF ${COMPOSE_CONTENT} EOF`,
     `echo "${PLUGIN_REGISTRY_PASSWORD}" | docker login -u ${PLUGIN_REGISTRY_USERNAME} --password-stdin ${PLUGIN_REGISTRY_URL}`,
     `docker-compose -f ${COMPOSE_FILE} down`,
     `docker-compose -f ${COMPOSE_FILE} pull`,
