@@ -69,7 +69,7 @@ async function main() {
   fs.writeFileSync(PLUGIN_COMPOSE_FILE, COMPOSE_CONTENT)
 
   const drone_commands = [
-    `echo "${PLUGIN_REGISTRY_PASSWORD}" | docker login --u ${PLUGIN_REGISTRY_USERNAME} --password-stdin ${PLUGIN_REGISTRY_URL}`,
+    `echo "${PLUGIN_REGISTRY_PASSWORD}" | docker login -u ${PLUGIN_REGISTRY_USERNAME} --password-stdin ${PLUGIN_REGISTRY_URL}`,
     `docker-compose -f ${PLUGIN_COMPOSE_FILE} build --pull`,
     `docker-compose -f ${PLUGIN_COMPOSE_FILE} push`
   ]
@@ -79,7 +79,7 @@ async function main() {
     `cat > ${COMPOSE_FILE} <<EOF
   ${COMPOSE_CONTENT}
   EOF `,
-    `echo "${PLUGIN_REGISTRY_PASSWORD}" | docker login --u ${PLUGIN_REGISTRY_USERNAME} --password-stdin ${PLUGIN_REGISTRY_URL}`,
+    `echo "${PLUGIN_REGISTRY_PASSWORD}" | docker login -u ${PLUGIN_REGISTRY_USERNAME} --password-stdin ${PLUGIN_REGISTRY_URL}`,
     `docker-compose -f ${COMPOSE_FILE} down`,
     `docker-compose -f ${COMPOSE_FILE} pull`,
     `docker-compose -f ${COMPOSE_FILE} up -d`
