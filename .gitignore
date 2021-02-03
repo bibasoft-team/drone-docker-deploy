@@ -1,0 +1,5 @@
+node_modules
+dist
+id_rsa
+/docker-compose.yml
+example
