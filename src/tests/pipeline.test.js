@@ -103,7 +103,7 @@ describe('pipeline', () => {
 		it('must run ssh.copy with correct files', async () => {
 			const pipeline = new Pipeline()
 			await pipeline.run()
-			expect(pipeline.ssh.copy).toBeCalledWith(['file.txt'])
+			expect(pipeline.ssh.copy).toBeCalledWith(['file.txt', 'docker-compose.yml'])
 		})
 		it('must run ssh.dispose', async () => {
 			const pipeline = new Pipeline()

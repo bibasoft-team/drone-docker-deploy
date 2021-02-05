@@ -33,7 +33,7 @@ class Pipeline {
 		this.compose.build()
 
 		await this.ssh.connect()
-		await this.ssh.copy(this.config.files)
+		await this.ssh.copy([...this.config.files, this.config.compose_file])
 		await this.ssh.dispose()
 
 		await this.compose.deploy()
