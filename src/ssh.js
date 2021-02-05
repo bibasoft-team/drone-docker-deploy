@@ -36,6 +36,7 @@ class SSH {
 	}
 	async commands(commands) {
 		for (const command of commands) {
+			console.log('run ' + command)
 			const { stdout, stderr } = await this.ssh.execCommand(command, { cwd: this.config.target })
 			if (stdout) console.log('stdout', stdout)
 			if (stderr) {
@@ -45,7 +46,7 @@ class SSH {
 	}
 
 	_processError(err) {
-		if (!err.toLowerCase().includes('warning')) {
+		if (err.toLowerCase().includes('error')) {
 			console.error('stderr: ' + err)
 			throw err
 		} else {

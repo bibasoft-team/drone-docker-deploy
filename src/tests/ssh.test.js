@@ -105,18 +105,18 @@ describe('SSH', () => {
 	})
 
 	describe('_processError', () => {
-		it('must ignore if contains warning', async () => {
+		it('must ignore if not contains error', async () => {
 			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			expect(() => ssh._processError('warning: it is bad test')).not.toThrow()
 		})
 
-		it('must ignore if contains uppercase warning', async () => {
+		it('must throw if contains error', async () => {
 			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
-			expect(() => ssh._processError('Warning: it is bad test')).not.toThrow()
+			expect(() => ssh._processError('Error: it is bad test')).toThrow()
 		})
 
 		it('must throw', async () => {
