@@ -1,0 +1,10 @@
+version: "3.5"
+
+services:
+  api:
+    image: ${IMAGE}:${TAG}
+    container_name: "${IMAGE}_${TAG}"
+    build:
+      context: ./
+    ports:
+      - 3000:3000

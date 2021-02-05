@@ -1,5 +1,4 @@
 node_modules
 dist
+coverage
 id_rsa
-/docker-compose.yml
-example

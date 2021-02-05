@@ -1,0 +1,26 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: tests
+    image: node:alpine
+    commands:
+      - npm ci
+      - npm run test
+
+  - name: publish
+    image: plugins/docker:18
+    settings:
+      auto_tag: true
+      dockerfile: Dockerfile
+      repo: bibasoft/drone-docker-deploy
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+    when:
+      event:
+        - push
+        - tag
