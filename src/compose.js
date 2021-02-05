@@ -41,7 +41,7 @@ class Compose {
 			docker_login(this.registry.url, this.registry.username, this.registry.password),
 			// `docker-compose -f ${this.file} down`,
 			`docker-compose -f ${this.file} pull`,
-			`docker-compose -f ${this.file} up -d`,
+			`docker-compose -f ${this.file} up -d --build`,
 		]
 		await this.ssh.commands(ssh_commands)
 		await this.ssh.dispose()

@@ -46,9 +46,10 @@ class SSH {
 
 	_processError(err) {
 		if (!err.toLowerCase().includes('warning')) {
+			console.error('stderr: ' + err)
 			throw err
 		} else {
-			console.warn('stderr', err)
+			console.warn('stderr warn: ', err)
 		}
 	}
 
