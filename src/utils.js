@@ -9,7 +9,7 @@ function getTag(branch) {
 }
 
 function escape(dir) {
-	return (dir + '').toLowerCase().replace(/(?:(?![a-z0-9\-]).)/gm, '-')
+	return (dir + '').toLowerCase().replace(/[^a-z0-9\-]/gm, '-')
 }
 
 function exec(s) {
