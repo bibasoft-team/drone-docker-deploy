@@ -25,7 +25,7 @@ describe('SSH', () => {
 
 	describe('connect', () => {
 		it('must call connect', async () => {
-			const config = { host: 'host', username: 'username', key: 'key' }
+			const config = { host: 'host', user: 'username', key: 'key' }
 			const ssh = new SSH(config)
 
 			await ssh.connect()
@@ -34,20 +34,20 @@ describe('SSH', () => {
 		})
 
 		it('must call connect with right args', async () => {
-			const config = { host: 'host', username: 'username', key: 'key' }
+			const config = { host: 'host', user: 'username', key: 'key' }
 			const ssh = new SSH(config)
 
 			await ssh.connect()
 
 			expect(ssh.ssh.connect).toBeCalledWith({
 				host: config.host,
-				username: config.username,
+				username: config.user,
 				privateKey: config.key,
 			})
 		})
 
 		it('must call isConnected', async () => {
-			const config = { host: 'host', username: 'username', key: 'key' }
+			const config = { host: 'host', user: 'username', key: 'key' }
 			const ssh = new SSH(config)
 
 			await ssh.connect()
@@ -56,7 +56,7 @@ describe('SSH', () => {
 		})
 
 		it('must throw if not connected', async () => {
-			const config = { host: 'host', username: 'username', key: 'key' }
+			const config = { host: 'host', user: 'username', key: 'key' }
 			const ssh = new SSH(config)
 
 			ssh.ssh.isConnected = jest.fn().mockReturnValue(false)
@@ -69,7 +69,7 @@ describe('SSH', () => {
 
 	describe('copy', () => {
 		it('must call mkdir', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			await ssh.copy(['example/file.txt', '/path/env.js', 'example/test.kek'])
@@ -77,7 +77,7 @@ describe('SSH', () => {
 			expect(ssh.ssh.mkdir).toBeCalledWith(config.target, 'exec')
 		})
 		it('must call connect', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			await ssh.copy(['example/file.txt', '/path/env.js', 'example/test.kek'])
@@ -92,7 +92,7 @@ describe('SSH', () => {
 
 	describe('dispose', () => {
 		it('must call dispose', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			await ssh.dispose()
@@ -103,21 +103,21 @@ describe('SSH', () => {
 
 	describe('_processError', () => {
 		it('must ignore if contains warning', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			expect(() => ssh._processError('warning: it is bad test')).not.toThrow()
 		})
 
 		it('must ignore if contains uppercase warning', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			expect(() => ssh._processError('Warning: it is bad test')).not.toThrow()
 		})
 
 		it('must throw', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			expect(() => ssh._processError('error: it is bad test')).toThrow()
@@ -126,7 +126,7 @@ describe('SSH', () => {
 
 	describe('commands', () => {
 		it('must call command 2 times', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			await ssh.commands(['test command', 'test command 2'])
@@ -135,7 +135,7 @@ describe('SSH', () => {
 		})
 
 		it('must call commands with correct args', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)
 
 			await ssh.commands(['test command', 'test command 2'])
@@ -147,7 +147,7 @@ describe('SSH', () => {
 		})
 
 		it('must handle stderr', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 
 			const ssh = new SSH(config)
 			ssh.ssh.execCommand = jest.fn().mockReturnValue({ stderr: 'error!' })
@@ -162,7 +162,7 @@ describe('SSH', () => {
 		})
 
 		it('must throw if _processError throw', async () => {
-			const config = { host: 'host', username: 'username', key: 'key', target: '/path/to/lol' }
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 
 			const ssh = new SSH(config)
 			ssh.ssh.execCommand = jest.fn().mockReturnValue({ stderr: 'error!' })

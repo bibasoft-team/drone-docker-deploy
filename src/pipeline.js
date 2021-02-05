@@ -15,7 +15,7 @@ const SSH = require('./ssh')
 class Pipeline {
 	constructor() {
 		this.config = new Config()
-		console.log(this.config)
+		// console.log(this.config)
 		this.compose = new Compose(
 			this.config.compose_file,
 			{

@@ -8,11 +8,11 @@ class SSH {
 	}
 
 	async connect() {
-		console.log(`try connect to ${this.config.username}@${this.config.host}...`)
+		console.log(`try connect to ${this.config.user}@${this.config.host}...`)
 
 		await this.ssh.connect({
 			host: this.config.host,
-			username: this.config.username,
+			username: this.config.user,
 			privateKey: this.config.key,
 		})
 		if (this.ssh.isConnected()) {
