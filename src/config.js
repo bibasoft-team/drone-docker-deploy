@@ -13,7 +13,7 @@ class Config {
 			PLUGIN_COMPOSE_FILE = 'docker-compose.yml',
 			PLUGIN_TARGET,
 			PLUGIN_FILES,
-			PLUGIN_ENVS = '{}',
+			PLUGIN_ENVS = '',
 
 			DRONE_SOURCE_BRANCH,
 		} = process.env
@@ -33,7 +33,10 @@ class Config {
 		}
 		this.compose_file = PLUGIN_COMPOSE_FILE
 		this.files = PLUGIN_FILES?.split(',') || []
-		this.envs = JSON.parse(PLUGIN_ENVS)
+		this.envs = PLUGIN_ENVS.split(',').reduce(
+			(all, cur) => ({ ...all, [cur.toUpperCase()]: process.env[cur.toUpperCase()] }),
+			{},
+		)
 		this.branch = DRONE_SOURCE_BRANCH
 	}
 }

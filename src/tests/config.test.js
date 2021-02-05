@@ -26,8 +26,10 @@ test('Config — must get env vars', () => {
 		PLUGIN_COMPOSE_FILE: 'docker-compose.dev.yml',
 		PLUGIN_TARGET: '/home/test/',
 		PLUGIN_FILES: 'file.txt,file2.txt',
-		PLUGIN_ENVS: '{ "IMAGE": "test" }',
+		PLUGIN_ENVS: 'image,test',
 		DRONE_SOURCE_BRANCH: 'EDU-23',
+		IMAGE: 'image',
+		TEST: 'test',
 	}
 	process.env = ENV
 
@@ -51,7 +53,8 @@ test('Config — must get env vars', () => {
 		password: ENV.PLUGIN_REGISTRY_PASSWORD,
 	})
 	expect(config.envs).toEqual({
-		IMAGE: 'test',
+		IMAGE: 'image',
+		TEST: 'test',
 	})
 	expect(config.files).toEqual(['file.txt', 'file2.txt'])
 
