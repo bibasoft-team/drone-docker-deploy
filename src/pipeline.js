@@ -24,7 +24,7 @@ class Pipeline {
 			this.config.registry,
 			this.config.ssh,
 		) // TODO refactoring
-		this.ssh = new SSH()
+		this.ssh = new SSH(this.config.ssh)
 	}
 
 	async run() {

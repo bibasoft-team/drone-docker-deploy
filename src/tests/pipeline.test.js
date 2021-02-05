@@ -20,7 +20,7 @@ jest.mock('../config', () =>
 		},
 		compose_file: 'docker-compose.yml',
 		files: ['file.txt'],
-		envs: { TEST: 1 },
+		envs: { IMAGE: 'image' },
 		branch: 'edu-12-features',
 	})),
 )
@@ -53,6 +53,31 @@ describe('pipeline', () => {
 		expect(pipeline).toHaveProperty('config')
 		expect(pipeline).toHaveProperty('ssh')
 		expect(pipeline).toHaveProperty('compose')
+	})
+	it('must call ssh with config', () => {
+		const pipeline = new Pipeline()
+		expect(SSH).toBeCalledWith({ host: 'host', user: 'user', key: 'key', target: 'target' })
+	})
+	it('must call compose with config', () => {
+		const pipeline = new Pipeline()
+		expect(Compose).toBeCalledWith(
+			'docker-compose.yml',
+			{
+				IMAGE: 'image',
+				TAG: 'tag',
+			},
+			{
+				url: 'url',
+				username: 'user',
+				password: 'password',
+			},
+			{
+				host: 'host',
+				user: 'user',
+				key: 'key',
+				target: 'target',
+			},
+		)
 	})
 	describe('run', () => {
 		it('must run compose.envsubst', async () => {
