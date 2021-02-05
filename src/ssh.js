@@ -23,6 +23,7 @@ class SSH {
 	}
 
 	async copy(files) {
+		await this.ssh.execCommand(`rm -rf ${this.config.target}`)
 		console.log('mkdir ' + this.config.target)
 		await this.ssh.mkdir(this.config.target, 'exec')
 		const _files = files.map(f => ({

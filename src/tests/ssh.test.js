@@ -68,6 +68,14 @@ describe('SSH', () => {
 	})
 
 	describe('copy', () => {
+		it('must call rm dir', async () => {
+			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
+			const ssh = new SSH(config)
+
+			await ssh.copy(['example/file.txt', '/path/env.js', 'example/test.kek'])
+
+			expect(ssh.ssh.execCommand).toBeCalledWith(`rm -rf ${config.target}`)
+		})
 		it('must call mkdir', async () => {
 			const config = { host: 'host', user: 'username', key: 'key', target: '/path/to/lol' }
 			const ssh = new SSH(config)

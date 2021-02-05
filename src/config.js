@@ -15,6 +15,7 @@ class Config {
 			PLUGIN_FILES,
 			PLUGIN_ENVS = '',
 			PLUGIN_TAG_SUFFIX = true,
+			PLUGIN_RM = true,
 
 			DRONE_SOURCE_BRANCH,
 		} = process.env
@@ -43,6 +44,7 @@ class Config {
 			{},
 		)
 		this.branch = DRONE_SOURCE_BRANCH
+		this.rm = PLUGIN_RM
 	}
 }
 

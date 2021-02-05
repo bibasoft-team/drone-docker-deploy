@@ -31,6 +31,7 @@ test('Config — must get env vars', () => {
 		IMAGE: 'image',
 		TEST: 'test',
 		PLUGIN_TAG_SUFFIX: true,
+		PLUGIN_RM: true,
 	}
 	process.env = ENV
 
@@ -60,6 +61,7 @@ test('Config — must get env vars', () => {
 	expect(config.files).toEqual(['file.txt', 'file2.txt'])
 
 	expect(config.branch).toEqual(ENV.DRONE_SOURCE_BRANCH)
+	expect(config.rm).toEqual(ENV.PLUGIN_RM)
 })
 
 test('Config — default values', () => {
@@ -78,4 +80,13 @@ test('Config — without suffix', () => {
 	const config = new Config()
 
 	expect(config.ssh.target).toBe('/home/rediska/')
+})
+
+test('Config — without rm', () => {
+	process.env = {
+		PLUGIN_RM: false,
+	}
+	const config = new Config()
+
+	expect(config.rm).toBe(false)
 })
