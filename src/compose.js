@@ -39,7 +39,7 @@ class Compose {
 		await this.ssh.connect()
 		const ssh_commands = [
 			docker_login(this.registry.url, this.registry.username, this.registry.password),
-			`docker-compose -f ${this.file} down`,
+			// `docker-compose -f ${this.file} down`,
 			`docker-compose -f ${this.file} pull`,
 			`docker-compose -f ${this.file} up -d`,
 		]
