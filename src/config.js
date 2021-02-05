@@ -14,6 +14,7 @@ class Config {
 			PLUGIN_TARGET,
 			PLUGIN_FILES,
 			PLUGIN_ENVS = '',
+			PLUGIN_TAG_SUFFIX = true,
 
 			DRONE_SOURCE_BRANCH,
 		} = process.env
@@ -24,7 +25,11 @@ class Config {
 			host: PLUGIN_SSH_HOST,
 			user: PLUGIN_SSH_USER,
 			key: PLUGIN_SSH_KEY,
-			target: PLUGIN_TARGET ? path.join(PLUGIN_TARGET, tag) : '',
+			target: PLUGIN_TARGET
+				? PLUGIN_TAG_SUFFIX
+					? path.join(PLUGIN_TARGET, tag)
+					: PLUGIN_TARGET
+				: '',
 		}
 		this.registry = {
 			url: PLUGIN_REGISTRY_URL,

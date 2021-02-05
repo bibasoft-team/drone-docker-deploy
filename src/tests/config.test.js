@@ -30,6 +30,7 @@ test('Config — must get env vars', () => {
 		DRONE_SOURCE_BRANCH: 'EDU-23',
 		IMAGE: 'image',
 		TEST: 'test',
+		PLUGIN_TAG_SUFFIX: true,
 	}
 	process.env = ENV
 
@@ -67,4 +68,14 @@ test('Config — default values', () => {
 	expect(config.compose_file).toBe('docker-compose.yml')
 	expect(config.files).toEqual([])
 	expect(config.envs).toEqual({})
+})
+
+test('Config — without suffix', () => {
+	process.env = {
+		PLUGIN_TAG_SUFFIX: false,
+		PLUGIN_TARGET: '/home/rediska/',
+	}
+	const config = new Config()
+
+	expect(config.ssh.target).toBe('/home/rediska/')
 })
