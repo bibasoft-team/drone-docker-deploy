@@ -23,13 +23,16 @@ class SSH {
 	}
 
 	async copy(files) {
+		console.log('mkdir ' + this.config.target)
 		await this.ssh.mkdir(this.config.target, 'exec')
-		await this.ssh.putFiles(
-			files.map(f => ({
-				local: f,
-				remote: path.join(this.config.target, path.parse(f).base),
-			})),
-		)
+		const _files = files.map(f => ({
+			local: f,
+			remote: path.join(this.config.target, path.parse(f).base),
+		}))
+		console.log('copy files \n' + _files.map(f => `${f.local} ——> ${f.remote}`).join(',\n'))
+		await this.ssh.putFiles(_files, {
+			sftp: null,
+		})
 	}
 	async commands(commands) {
 		for (const command of commands) {

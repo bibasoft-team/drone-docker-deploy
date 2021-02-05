@@ -82,11 +82,14 @@ describe('SSH', () => {
 
 			await ssh.copy(['example/file.txt', '/path/env.js', 'example/test.kek'])
 
-			expect(ssh.ssh.putFiles).toBeCalledWith([
-				{ local: 'example/file.txt', remote: '/path/to/lol/file.txt' },
-				{ local: '/path/env.js', remote: '/path/to/lol/env.js' },
-				{ local: 'example/test.kek', remote: '/path/to/lol/test.kek' },
-			])
+			expect(ssh.ssh.putFiles).toBeCalledWith(
+				[
+					{ local: 'example/file.txt', remote: '/path/to/lol/file.txt' },
+					{ local: '/path/env.js', remote: '/path/to/lol/env.js' },
+					{ local: 'example/test.kek', remote: '/path/to/lol/test.kek' },
+				],
+				{ sftp: null },
+			)
 		})
 	})
 
