@@ -13,6 +13,7 @@
 		"fs": "^0.0.1-security",
 		"node-ssh": "^11.1.1",
 		"path": "^0.12.7",
+		"shell-escape": "^0.2.0",
 		"shelljs.exec": "^1.1.8"
 	},
 	"devDependencies": {

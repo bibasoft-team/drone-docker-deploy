@@ -1,4 +1,5 @@
 const _exec = require('shelljs.exec')
+const shellescape = require('shell-escape')
 
 function getTag(branch) {
 	const match = getFirstGroup(/([A-Z]+-[\d]+)/g, branch)
@@ -23,7 +24,7 @@ function getFirstGroup(regexp, str) {
 }
 
 function docker_login(url, username, password) {
-	return `docker login -u ${username} --password ${password} ${url}`
+	return shellescape(['docker', 'login', '-u', username, '--password', password, url])
 }
 
 module.exports = {
