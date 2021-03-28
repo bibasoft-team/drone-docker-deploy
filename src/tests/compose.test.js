@@ -10,6 +10,7 @@ const SSH = require('../ssh')
 beforeEach(() => {
 	mock({
 		'docker-compose.yml': '${IMAGE}_${TAG}',
+		'docker-compose.build.yml': '${IMAGE}_${TAG}',
 	})
 })
 
@@ -40,16 +41,16 @@ jest.mock('../ssh.js', () =>
 describe('compose', () => {
 	describe('envsubst', () => {
 		it('throw error if file not exists', () => {
-			expect(() => new Compose('docker.com.yml').envsubst()).toThrow()
+			expect(() => new Compose().envsubst('docker.com.yml')).toThrow()
 		})
 
 		it('envsubst must call', () => {
-			new Compose('docker-compose.yml', {}, {}).envsubst()
+			new Compose({}, {}).envsubst('docker-compose.yml')
 			expect(envsubst).toHaveBeenCalled()
 		})
 
 		it('must pass arguments', () => {
-			new Compose('docker-compose.yml', { IMAGE: 1, TAG: 'test' }).envsubst()
+			new Compose({ IMAGE: 1, TAG: 'test' }).envsubst('docker-compose.yml')
 			expect(envsubst).toHaveBeenCalledWith('${IMAGE}_${TAG}', {
 				IMAGE: 1,
 				TAG: 'test',
@@ -57,11 +58,11 @@ describe('compose', () => {
 		})
 
 		it('must return substituted values', () => {
-			new Compose('docker-compose.yml', { IMAGE: 1, TAG: 'test' }).envsubst()
+			new Compose({ IMAGE: 1, TAG: 'test' }).envsubst('docker-compose.yml')
 			expect(envsubst).toHaveReturnedWith('1_test')
 		})
 		it('must write output to file', () => {
-			new Compose('docker-compose.yml', { IMAGE: 1, TAG: 'test' }).envsubst()
+			new Compose({ IMAGE: 1, TAG: 'test' }).envsubst('docker-compose.yml')
 			expect(fs.readFileSync('docker-compose.yml').toString()).toEqual('1_test')
 		})
 	})
@@ -69,53 +70,51 @@ describe('compose', () => {
 	describe('build', () => {
 		it('must call exec 3 times', () => {
 			const compose = new Compose(
-				'docker-compose.yml',
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 			)
-			compose.build()
+			compose.build('docker-compose.build.yml')
 			expect(utils.exec).toBeCalledTimes(3)
 		})
 
 		it('must call docker_login with correct args', () => {
 			const compose = new Compose(
-				'docker-compose.yml',
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 			)
-			compose.build()
+			compose.build('docker-compose.build.yml')
 			expect(utils.docker_login).toBeCalledWith('url', 'user', 'password')
 		})
 
 		it('must call exec with correct args', () => {
 			const compose = new Compose(
-				'docker-compose.yml',
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 			)
-			compose.build()
+			compose.build('docker-compose.build.yml')
 			expect(utils.exec).toHaveBeenNthCalledWith(1, 'docker login -u user -p password url')
 			expect(utils.exec).toHaveBeenNthCalledWith(
 				2,
-				'docker-compose -f docker-compose.yml build --pull',
+				'docker-compose -f docker-compose.build.yml build --pull',
 			)
-			expect(utils.exec).toHaveBeenNthCalledWith(3, 'docker-compose -f docker-compose.yml push')
+			expect(utils.exec).toHaveBeenNthCalledWith(
+				3,
+				'docker-compose -f docker-compose.build.yml push',
+			)
 		})
 
 		it('throw if exec return err', () => {
 			const compose = new Compose(
-				'error.yml',
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 			)
-			expect(() => compose.build()).toThrow()
+			expect(() => compose.build('error.yml')).toThrow()
 		})
 	})
 
 	describe('deploy', () => {
 		it('must create new ssh class', () => {
-			const compose = new Compose(
-				'docker-compose.yml',
+			new Compose(
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 				{
@@ -136,7 +135,6 @@ describe('compose', () => {
 				target: 'target',
 			}
 			const compose = new Compose(
-				'docker-compose.yml',
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 				ssh_config,
@@ -154,12 +152,11 @@ describe('compose', () => {
 				target: 'target',
 			}
 			const compose = new Compose(
-				'docker-compose.yml',
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 				ssh_config,
 			)
-			await compose.deploy()
+			await compose.deploy('docker-compose.yml')
 
 			expect(compose.ssh.connect).toBeCalled()
 		})
@@ -172,16 +169,14 @@ describe('compose', () => {
 				target: 'target',
 			}
 			const compose = new Compose(
-				'docker-compose.yml',
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 				ssh_config,
 			)
-			await compose.deploy()
+			await compose.deploy('docker-compose.yml')
 
 			expect(compose.ssh.commands).toBeCalledWith([
 				'docker login -u user -p password url',
-				// `docker-compose -f docker-compose.yml down`,
 				`docker-compose -f docker-compose.yml pull`,
 				`docker-compose -f docker-compose.yml up -d --no-build`,
 			])
@@ -195,12 +190,11 @@ describe('compose', () => {
 				target: 'target',
 			}
 			const compose = new Compose(
-				'docker-compose.yml',
 				{ IMAGE: 1, TAG: 'test' },
 				{ url: 'url', username: 'user', password: 'password' },
 				ssh_config,
 			)
-			await compose.deploy()
+			await compose.deploy('docker-compose.yml')
 
 			expect(compose.ssh.dispose).toBeCalled()
 		})

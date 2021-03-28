@@ -10,6 +10,7 @@ class Config {
 			PLUGIN_REGISTRY_USERNAME,
 			PLUGIN_REGISTRY_PASSWORD,
 			PLUGIN_REGISTRY_URL,
+			PLUGIN_BUILD_COMPOSE_FILE = 'docker-compose.yml',
 			PLUGIN_COMPOSE_FILE = 'docker-compose.yml',
 			PLUGIN_TARGET,
 			PLUGIN_FILES,
@@ -38,6 +39,7 @@ class Config {
 			password: PLUGIN_REGISTRY_PASSWORD,
 		}
 		this.compose_file = PLUGIN_COMPOSE_FILE
+		this.build_compose_file = PLUGIN_BUILD_COMPOSE_FILE
 		this.files = PLUGIN_FILES?.split(',') || []
 		this.envs = PLUGIN_ENVS.split(',').reduce(
 			(all, cur) => ({ ...all, [cur.toUpperCase()]: process.env[cur.toUpperCase()] }),

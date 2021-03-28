@@ -17,7 +17,6 @@ class Pipeline {
 		this.config = new Config()
 		// console.log(this.config)
 		this.compose = new Compose(
-			this.config.compose_file,
 			{
 				...this.config.envs,
 				TAG: getTag(this.config.branch),
@@ -29,17 +28,19 @@ class Pipeline {
 	}
 
 	async run() {
-		this.compose.envsubst()
-		this.compose.build()
+		this.compose.envsubst(this.config.compose_file)
+		if (this.config.build_compose_file !== this.config.compose_file)
+			this.compose.envsubst(this.config.build_compose_file)
+
+		this.compose.build(this.config.build_compose_file)
 
 		await this.ssh.connect()
 		await this.ssh.copy([...this.config.files, this.config.compose_file])
 		await this.ssh.dispose()
 
-		await this.compose.deploy()
+		await this.compose.deploy(this.config.compose_file)
 	}
 
-	// const TARGET = path.join(PLUGIN_PATH, TAG)
 }
 
 module.exports = Pipeline

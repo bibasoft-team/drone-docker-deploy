@@ -4,27 +4,26 @@ const { exec, docker_login } = require('./utils')
 const SSH = require('./ssh')
 
 class Compose {
-	constructor(file, envs, registry, ssh) {
-		this.file = file
+	constructor(envs, registry, ssh) {
 		this.envs = envs
 		this.registry = registry
 		this.ssh = new SSH(ssh)
 	}
 
-	envsubst() {
-		if (!fs.existsSync(this.file)) throw `docker-compose file "${this.file}" does not exist`
+	envsubst(file) {
+		if (!fs.existsSync(file)) throw `docker-compose file "${file}" does not exist`
 
-		const compose_file = fs.readFileSync(this.file).toString()
+		const compose_file = fs.readFileSync(file).toString()
 		const _compose_file = envsubst(compose_file, this.envs)
 
-		fs.writeFileSync(this.file, _compose_file)
+		fs.writeFileSync(file, _compose_file)
 	}
 
-	build() {
+	build(file) {
 		const drone_commands = [
 			docker_login(this.registry.url, this.registry.username, this.registry.password),
-			`docker-compose -f ${this.file} build --pull`,
-			`docker-compose -f ${this.file} push`,
+			`docker-compose -f ${file} build --pull`,
+			`docker-compose -f ${file} push`,
 		]
 
 		drone_commands.forEach(command => {
@@ -35,13 +34,13 @@ class Compose {
 			}
 		})
 	}
-	async deploy() {
+	async deploy(file) {
 		await this.ssh.connect()
 		const ssh_commands = [
 			docker_login(this.registry.url, this.registry.username, this.registry.password),
 			// `docker-compose -f ${this.file} down`,
-			`docker-compose -f ${this.file} pull`,
-			`docker-compose -f ${this.file} up -d --no-build`,
+			`docker-compose -f ${file} pull`,
+			`docker-compose -f ${file} up -d --no-build`,
 		]
 		await this.ssh.commands(ssh_commands)
 		await this.ssh.dispose()

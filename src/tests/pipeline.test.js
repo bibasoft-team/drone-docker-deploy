@@ -19,6 +19,7 @@ jest.mock('../config', () =>
 			password: 'password',
 		},
 		compose_file: 'docker-compose.yml',
+		build_compose_file: 'docker-compose.build.yml',
 		files: ['file.txt'],
 		envs: { IMAGE: 'image' },
 		branch: 'edu-12-features',
@@ -61,7 +62,6 @@ describe('pipeline', () => {
 	it('must call compose with config', () => {
 		const pipeline = new Pipeline()
 		expect(Compose).toBeCalledWith(
-			'docker-compose.yml',
 			{
 				IMAGE: 'image',
 				TAG: 'tag',
@@ -83,12 +83,20 @@ describe('pipeline', () => {
 		it('must run compose.envsubst', async () => {
 			const pipeline = new Pipeline()
 			await pipeline.run()
-			expect(pipeline.compose.envsubst).toBeCalled()
+			expect(pipeline.compose.envsubst).toHaveBeenNthCalledWith(1, 'docker-compose.yml')
+			expect(pipeline.compose.envsubst).toHaveBeenNthCalledWith(2, 'docker-compose.build.yml')
+		})
+		it('must run compose.envsubst once if compose-build = compose', async () => {
+			const pipeline = new Pipeline()
+			pipeline.config.build_compose_file = pipeline.config.compose_file
+			await pipeline.run()
+			expect(pipeline.compose.envsubst).toBeCalledTimes(1)
+			expect(pipeline.compose.envsubst).toHaveBeenNthCalledWith(1, 'docker-compose.yml')
 		})
 		it('must run compose.build', async () => {
 			const pipeline = new Pipeline()
 			await pipeline.run()
-			expect(pipeline.compose.build).toBeCalled()
+			expect(pipeline.compose.build).toBeCalledWith('docker-compose.build.yml')
 		})
 		it('must run ssh.connect', async () => {
 			const pipeline = new Pipeline()
@@ -113,7 +121,7 @@ describe('pipeline', () => {
 		it('must run compose.build', async () => {
 			const pipeline = new Pipeline()
 			await pipeline.run()
-			expect(pipeline.compose.deploy).toBeCalled()
+			expect(pipeline.compose.deploy).toBeCalledWith('docker-compose.yml')
 		})
 	})
 })
